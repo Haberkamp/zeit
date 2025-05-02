@@ -45,15 +45,21 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {!isActive ? (
-        <Button title="Start" onPress={handleStart} color="white" />
-      ) : (
-        <View style={styles.sessionScreen}>
-          <Text style={styles.phaseText}>{phase}</Text>
-          <Text style={styles.countText}>{count}</Text>
+      <View style={styles.content}>
+        {isActive && (
+          <View style={styles.sessionScreen}>
+            <Text style={styles.phaseText}>{phase}</Text>
+            <Text style={styles.countText}>{count}</Text>
+          </View>
+        )}
+      </View>
+      <View style={styles.buttonContainer}>
+        {!isActive ? (
+          <Button title="Start" onPress={handleStart} color="white" />
+        ) : (
           <Button title="Stop" onPress={handleStop} color="white" />
-        </View>
-      )}
+        )}
+      </View>
     </View>
   );
 }
@@ -62,8 +68,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
+  },
+  content: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  buttonContainer: {
+    alignItems: "center",
+    paddingBottom: 40,
   },
   sessionScreen: {
     flex: 1,
