@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, type ViewStyle } from "react-native";
 import {
@@ -20,6 +21,7 @@ export default function HomeScreen() {
 
   // handle start: reset and activate session
   function handleStart() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPhaseIndex(0);
     setCount(1);
     setIsActive(true);
@@ -46,6 +48,7 @@ export default function HomeScreen() {
 
   // handle stop: deactivate session and reset
   function handleStop() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setIsActive(false);
     setPhaseIndex(0);
     setCount(1);
