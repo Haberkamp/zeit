@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type ViewStyle,
+} from "react-native";
+import Animated, {
+  Easing,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 type Phase = "Inhale" | "Hold" | "Exhale";
 
@@ -43,6 +56,43 @@ export default function HomeScreen() {
     setCount(1);
   }
 
+  const transform = useSharedValue(0);
+  // shared value for text color animation
+  const textProgress = useSharedValue(0);
+
+  useEffect(() => {
+    transform.value = withTiming(isActive ? 100 : 0, {
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
+    });
+    // animate text color
+    textProgress.value = withTiming(isActive ? 1 : 0, {
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [isActive]);
+
+  // animated text color style
+  const animatedTextStyle = useAnimatedStyle(() => {
+    const color = interpolateColor(
+      textProgress.value,
+      [0, 1],
+      ["black", "white"]
+    );
+    return { color };
+  });
+
+  const style = useAnimatedStyle<ViewStyle>(() => ({
+    transform: [
+      {
+        translateY: withTiming(`${transform.value}%`, {
+          duration: 200,
+          easing: Easing.out(Easing.cubic),
+        }),
+      },
+    ],
+  }));
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -54,20 +104,32 @@ export default function HomeScreen() {
         )}
       </View>
       <View style={styles.buttonContainer}>
-        {!isActive ? (
-          <Pressable style={styles.button} onPress={handleStart}>
-            <Text style={styles.buttonText}>Start Session</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            style={[styles.button, styles.stopButton]}
-            onPress={handleStop}
-          >
-            <Text style={[styles.buttonText, styles.stopButtonText]}>
-              Stop Session
-            </Text>
-          </Pressable>
-        )}
+        <Pressable
+          style={[
+            styles.button,
+            isActive && styles.stopButton,
+            { position: "relative", overflow: "hidden" },
+          ]}
+          onPress={() => {
+            if (isActive) {
+              handleStop();
+            } else {
+              handleStart();
+            }
+          }}
+        >
+          <Animated.Text style={[styles.buttonText, animatedTextStyle]}>
+            {isActive ? "Stop Session" : "Start Session"}
+          </Animated.Text>
+
+          <Animated.View
+            style={[
+              StyleSheet.absoluteFillObject,
+              { backgroundColor: "white", zIndex: -1 },
+              style,
+            ]}
+          />
+        </Pressable>
       </View>
     </View>
   );
@@ -88,7 +150,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   button: {
-    backgroundColor: "white",
     borderRadius: 0,
     paddingVertical: 12,
     paddingHorizontal: 32,
