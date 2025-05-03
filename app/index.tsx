@@ -59,6 +59,7 @@ export default function HomeScreen() {
   const transform = useSharedValue(0);
   // shared value for text color animation
   const textProgress = useSharedValue(0);
+  const slideProgress = useSharedValue(0); // 0 = Start, 1 = Stop
 
   useEffect(() => {
     transform.value = withTiming(isActive ? 100 : 0, {
@@ -67,6 +68,11 @@ export default function HomeScreen() {
     });
     // animate text color
     textProgress.value = withTiming(isActive ? 1 : 0, {
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
+    });
+    // animate start/stop slide
+    slideProgress.value = withTiming(isActive ? 1 : 0, {
       duration: 200,
       easing: Easing.out(Easing.cubic),
     });
@@ -86,6 +92,29 @@ export default function HomeScreen() {
     transform: [
       {
         translateY: withTiming(`${transform.value}%`, {
+          duration: 200,
+          easing: Easing.out(Easing.cubic),
+        }),
+      },
+    ],
+  }));
+
+  // Styles for independent text animation
+  const startSlideStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: withTiming(`${slideProgress.value * -100}%`, {
+          duration: 200,
+          easing: Easing.out(Easing.cubic),
+        }),
+      },
+    ],
+  }));
+
+  const stopSlideStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: withTiming(`${(1 - slideProgress.value) * 100}%`, {
           duration: 200,
           easing: Easing.out(Easing.cubic),
         }),
@@ -118,8 +147,27 @@ export default function HomeScreen() {
             }
           }}
         >
+          <View style={{ height: 20, overflow: "hidden" }}>
+            <Animated.Text
+              style={[styles.buttonText, animatedTextStyle, startSlideStyle]}
+            >
+              Start
+            </Animated.Text>
+            <Animated.Text
+              style={[
+                styles.buttonText,
+                animatedTextStyle,
+                stopSlideStyle,
+                { position: "absolute" },
+              ]}
+            >
+              Stop
+            </Animated.Text>
+          </View>
+
           <Animated.Text style={[styles.buttonText, animatedTextStyle]}>
-            {isActive ? "Stop Session" : "Start Session"}
+            {" "}
+            Session
           </Animated.Text>
 
           <Animated.View
@@ -150,6 +198,9 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   button: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
     borderRadius: 0,
     paddingVertical: 12,
     paddingHorizontal: 32,
