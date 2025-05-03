@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, type ViewStyle } from "react-native";
 import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type ViewStyle,
-} from "react-native";
-import Animated, {
   Easing,
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import SessionButton from "../components/SessionButton";
 
 type Phase = "Inhale" | "Hold" | "Exhale";
 
@@ -133,51 +128,10 @@ export default function HomeScreen() {
         )}
       </View>
       <View style={styles.buttonContainer}>
-        <Pressable
-          style={[
-            styles.button,
-            isActive && styles.stopButton,
-            { position: "relative", overflow: "hidden" },
-          ]}
-          onPress={() => {
-            if (isActive) {
-              handleStop();
-            } else {
-              handleStart();
-            }
-          }}
-        >
-          <View style={{ height: 20, overflow: "hidden" }}>
-            <Animated.Text
-              style={[styles.buttonText, animatedTextStyle, startSlideStyle]}
-            >
-              Start
-            </Animated.Text>
-            <Animated.Text
-              style={[
-                styles.buttonText,
-                animatedTextStyle,
-                stopSlideStyle,
-                { position: "absolute" },
-              ]}
-            >
-              Stop
-            </Animated.Text>
-          </View>
-
-          <Animated.Text style={[styles.buttonText, animatedTextStyle]}>
-            {" "}
-            Session
-          </Animated.Text>
-
-          <Animated.View
-            style={[
-              StyleSheet.absoluteFillObject,
-              { backgroundColor: "white", zIndex: -1 },
-              style,
-            ]}
-          />
-        </Pressable>
+        <SessionButton
+          isActive={isActive}
+          onPress={() => (isActive ? handleStop() : handleStart())}
+        />
       </View>
     </View>
   );
