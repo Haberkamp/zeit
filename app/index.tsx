@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Phase = "Inhale" | "Hold" | "Exhale";
 
@@ -55,9 +55,18 @@ export default function HomeScreen() {
       </View>
       <View style={styles.buttonContainer}>
         {!isActive ? (
-          <Button title="Start" onPress={handleStart} color="white" />
+          <Pressable style={styles.button} onPress={handleStart}>
+            <Text style={styles.buttonText}>Start Session</Text>
+          </Pressable>
         ) : (
-          <Button title="Stop" onPress={handleStop} color="white" />
+          <Pressable
+            style={[styles.button, styles.stopButton]}
+            onPress={handleStop}
+          >
+            <Text style={[styles.buttonText, styles.stopButtonText]}>
+              Stop Session
+            </Text>
+          </Pressable>
         )}
       </View>
     </View>
@@ -77,6 +86,24 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignItems: "center",
     paddingBottom: 40,
+  },
+  button: {
+    backgroundColor: "white",
+    borderRadius: 0,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    width: "60%",
+    alignItems: "center",
+  },
+  stopButton: {
+    backgroundColor: "transparent",
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 16,
+  },
+  stopButtonText: {
+    color: "white",
   },
   sessionScreen: {
     flex: 1,
