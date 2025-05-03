@@ -6,6 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Platform } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -27,7 +28,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </ThemeProvider>
   );
 }
